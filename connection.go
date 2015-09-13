@@ -168,12 +168,12 @@ func (r *Rcli) Eval(command string) (interface{}, error) {
 	return p.GetResultObject()
 }
 
-func (r *Rcli) VoidEval(command string) (interface{}, error) {
+func (r *Rcli) VoidEval(command string) error {
 	if r.conn == nil {
-		return nil, errors.New("Connection was previously closed")
+		return errors.New("Connection was previously closed")
 	}
 	r.sendCommand(cmdVoidEval, command+"\n")
 	p := r.readResponse()
-	return p.GetResultObject()
+	return p.getError()
 
 }
