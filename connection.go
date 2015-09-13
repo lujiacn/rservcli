@@ -159,16 +159,21 @@ func (r *Rcli) readResponse() *packet {
 	return newPacket(int(rep), results)
 }
 
-func (r *Rcli) Eval(command string) *packet {
+func (r *Rcli) Eval(command string) (interface{}, error) {
 	if r.conn == nil {
-		return newErrorPacket(errors.New("Connection was previously closed"))
+		return nil, errors.New("Connection was previously closed")
 	}
 	r.sendCommand(cmdEval, command+"\n")
-	return r.readResponse()
+	p := r.readResponse()
+	return p.GetResultObject()
 }
 
-func (r *Rcli) VoidEval(command string) *packet {
+func (r *Rcli) VoidEval(command string) (interface{}, error) {
+	if r.conn == nil {
+		return nil, errors.New("Connection was previously closed")
+	}
 	r.sendCommand(cmdVoidEval, command+"\n")
-	return r.readResponse()
+	p := r.readResponse()
+	return p.GetResultObject()
 
 }
