@@ -6,6 +6,8 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"github.com/lujiacn/rservcli/assign"
+	"github.com/lujiacn/rservcli/constants"
 	"io"
 	"net"
 	"strconv"
@@ -127,7 +129,7 @@ func prepareStringCommand(cmd string) []byte {
 	return cmdBytes
 }
 
-func (r *Rcli) sendCommand(cmdType command, cmd string) {
+func (r *Rcli) sendCommand(cmdType constants.Command, cmd string) {
 	cmdBytes := prepareStringCommand(cmd)
 	buf := new(bytes.Buffer)
 	//command
@@ -163,7 +165,7 @@ func (r *Rcli) Eval(command string) (interface{}, error) {
 	if r.conn == nil {
 		return nil, errors.New("Connection was previously closed")
 	}
-	r.sendCommand(cmdEval, command+"\n")
+	r.sendCommand(constants.CmdEval, command+"\n")
 	p := r.readResponse()
 	return p.GetResultObject()
 }
@@ -172,8 +174,62 @@ func (r *Rcli) VoidEval(command string) error {
 	if r.conn == nil {
 		return errors.New("Connection was previously closed")
 	}
-	r.sendCommand(cmdVoidEval, command+"\n")
+	r.sendCommand(constants.CmdVoidEval, command+"\n")
 	p := r.readResponse()
 	return p.getError()
 
+}
+
+func (r *Rcli) request(cmdType constants.Command, cont []byte, offset int, length int) *packet {
+	if cont != nil {
+		if offset >= len(cont) {
+			cont = nil
+			length = 0
+		} else if length > (len(cont) - offset) {
+			length = len(cont) - offset
+		}
+	}
+	if offset < 0 {
+		offset = 0
+	}
+	if length < 0 {
+		length = 0
+	}
+
+	contlen := 0
+	if cont != nil {
+		contlen = length
+	}
+
+	hdr := make([]byte, 16)
+	assign.SetInt(int(cmdType), hdr, 0)
+	assign.SetInt(contlen, hdr, 4)
+	for i := 8; i < 16; i++ {
+		hdr[i] = 0
+	}
+
+	buf := new(bytes.Buffer)
+
+	binary.Write(buf, binary.LittleEndian, hdr)
+	binary.Write(buf, binary.LittleEndian, cont)
+
+	r.ReadWriter.Write(buf.Bytes())
+	r.ReadWriter.Flush()
+
+	return r.readResponse()
+}
+
+func (r *Rcli) Assign(symbol string, value interface{}) error {
+	fmt.Println("in assign")
+	assignCommand, err := assign.Assign(symbol, value)
+	if err != nil {
+		fmt.Println("Error when assign")
+		return err
+	}
+	rp := r.request(constants.CmdSetSexp, assignCommand, 0, len(assignCommand))
+	fmt.Println("rp is", rp)
+	if rp != nil && !rp.IsError() {
+		return nil
+	}
+	return errors.New("Assign failed")
 }
