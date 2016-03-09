@@ -8,16 +8,16 @@ import (
 
 // Packet is the interface satisfied by objects returned from a R command.
 // It contains either the resulting object or an error.
-// type Packet interface {
+type Packet interface {
 
-// // GetResultObject will parse the packet"s contents, returning a go interface{}.
-// // If the Packet contains an error this will be returned.
-// // If conversion fails, an error will be returned.
-// GetResultObject() (interface{}, error)
+	// GetResultObject will parse the packet"s contents, returning a go interface{}.
+	// If the Packet contains an error this will be returned.
+	// If conversion fails, an error will be returned.
+	GetResultObject() (interface{}, error)
 
-// // IsError returns a boolean defining whether the Packet contains an error.
-// IsError() bool
-// }
+	// IsError returns a boolean defining whether the Packet contains an error.
+	IsError() bool
+}
 
 type packet struct {
 	cmd     int
@@ -25,14 +25,14 @@ type packet struct {
 	err     error
 }
 
-func newPacket(cmd int, content []byte) *packet {
+func newPacket(cmd int, content []byte) Packet {
 	return &packet{
 		cmd:     cmd,
 		content: content,
 	}
 }
 
-func newErrorPacket(err error) *packet {
+func newErrorPacket(err error) Packet {
 	return &packet{
 		err: err,
 	}

@@ -2,14 +2,21 @@ package rservcli
 
 import (
 	"fmt"
+	"io/ioutil"
 	"testing"
 )
 
-func TestConnect(t *testing.T) {
+func TestLoadingR(t *testing.T) {
 	r, _ := NewRcli("127.0.0.1", 6311)
-	// fmt.Println(r)
+	// read csv file to string
+	data, _ := ioutil.ReadFile("pt_list.csv")
+	// fmt.Println(result.string())
+	result := string(data)
+	fmt.Println(result)
+	err := r.Assign("test", result)
 
-	err := r.Assign("test", 123)
-	obj, err := r.Eval("test")
-	fmt.Println(obj, err)
+	r.VoidEval(`out <- read.csv(text=test, header =TRUE, colClasses=c("character", "character", "character"))`)
+	obj, err := r.Eval("out")
+	out := obj.(map[string]interface{})
+	fmt.Println(out["RECEIVED_DCM_ID"], err)
 }

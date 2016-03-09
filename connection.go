@@ -146,7 +146,7 @@ func (r *Rcli) sendCommand(cmdType constants.Command, cmd string) {
 	r.ReadWriter.Flush()
 }
 
-func (r *Rcli) readResponse() *packet {
+func (r *Rcli) readResponse() Packet {
 	rep := binary.LittleEndian.Uint32(r.readNBytes(4))
 	r1 := binary.LittleEndian.Uint32(r.readNBytes(4))
 	r.readNBytes(8)
@@ -176,11 +176,12 @@ func (r *Rcli) VoidEval(command string) error {
 	}
 	r.sendCommand(constants.CmdVoidEval, command+"\n")
 	p := r.readResponse()
-	return p.getError()
+	_, err := p.GetResultObject()
+	return err
 
 }
 
-func (r *Rcli) request(cmdType constants.Command, cont []byte, offset int, length int) *packet {
+func (r *Rcli) request(cmdType constants.Command, cont []byte, offset int, length int) Packet {
 	if cont != nil {
 		if offset >= len(cont) {
 			cont = nil
