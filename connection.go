@@ -176,8 +176,7 @@ func (r *Rcli) VoidEval(command string) error {
 	}
 	r.sendCommand(constants.CmdVoidEval, command+"\n")
 	p := r.readResponse()
-	_, err := p.GetResultObject()
-	return err
+	return p.GetError()
 
 }
 

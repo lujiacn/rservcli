@@ -17,6 +17,7 @@ type Packet interface {
 
 	// IsError returns a boolean defining whether the Packet contains an error.
 	IsError() bool
+	GetError() error
 }
 
 type packet struct {
@@ -61,6 +62,13 @@ func (p *packet) getError() error {
 	}
 
 	return errors.New("Command error with status code: " + strconv.Itoa(p.getStatusCode()))
+}
+
+func (p *packet) GetError() error {
+	if p.IsError() {
+		return p.getError()
+	}
+	return nil
 }
 
 func (p *packet) GetResultObject() (interface{}, error) {
