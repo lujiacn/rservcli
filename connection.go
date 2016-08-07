@@ -233,3 +233,42 @@ func (r *Rcli) Assign(symbol string, value interface{}) error {
 	}
 	return errors.New("Assign failed")
 }
+
+//Only return error with VoidEval script
+func (r *Rcli) VoidExec(command string) error {
+	scriptTpl := `
+	tryCatch({
+		%s
+	}, error = function(e){
+		err_msg <<- e$message
+	})
+	`
+	script := fmt.Sprintf(scriptTpl, command)
+	//Run script
+	err := r.VoidEval(script)
+
+	//It is template error, should not happend
+	if err != nil {
+		return err
+	}
+
+	//Evalue err_msg
+	errObj, _ := r.Eval(`exists("err_msg")`)
+	var errMsgExist bool = false
+	switch errObj.(type) {
+	default:
+		errMsgExist = errObj.(bool)
+	}
+
+	//get error message
+	if errMsgExist {
+		var errMsg string = ""
+		errMsgObj, _ := r.Eval("err_msg")
+		switch errMsgObj.(type) {
+		default:
+			errMsg = errMsgObj.(string)
+		}
+		return errors.New(errMsg)
+	}
+	return nil
+}
