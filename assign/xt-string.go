@@ -1,6 +1,6 @@
 package assign
 
-import "github.com/senseyeio/roger/constants"
+import "github.com/lujiacn/rservcli/constants"
 
 func assignStr(symbol string, value string) ([]byte, error) {
 	symn := []byte(symbol)

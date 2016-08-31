@@ -1,6 +1,6 @@
 package assign
 
-import "github.com/senseyeio/roger/constants"
+import "github.com/lujiacn/rservcli/constants"
 
 func assignByteArray(symbol string, value []byte) ([]byte, error) {
 	rl := len(value) + 4

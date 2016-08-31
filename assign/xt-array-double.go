@@ -1,9 +1,8 @@
 package assign
 
 import (
+	"github.com/lujiacn/rservcli/constants"
 	"math"
-
-	"github.com/senseyeio/roger/constants"
 )
 
 func assignDoubleArray(symbol string, value []float64) ([]byte, error) {
