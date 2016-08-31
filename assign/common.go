@@ -1,6 +1,6 @@
 package assign
 
-import "github.com/senseyeio/roger/constants"
+import "github.com/lujiacn/rservcli/constants"
 
 func SetHdr(valueType constants.DataType, valueLength int, buf []byte) {
 	buf[0] = byte(valueType)
