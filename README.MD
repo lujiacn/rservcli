@@ -32,9 +32,9 @@ if !ok {
 
 ## Known issue (due to rserve?)
 
-Cannot do assigment if value > 16 MB. If do string assiment, need to by batch.
+Cannot do assigment if value > 16 MB. If do string assiment, need do by batch.
 
-```
+```r
 // batchStrAssign do string assignment by each 16M
 func batchStrAssign(rVar, rawData string, rClient *rservcli.Rcli) (err error) {
 	batchSize := 16*1024*1024 - 1
