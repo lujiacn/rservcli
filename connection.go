@@ -6,12 +6,13 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/lujiacn/rservcli/assign"
-	"github.com/lujiacn/rservcli/constants"
 	"io"
 	"net"
 	"strconv"
 	"strings"
+
+	"github.com/lujiacn/rservcli/assign"
+	"github.com/lujiacn/rservcli/constants"
 )
 
 var _ = fmt.Print
@@ -220,14 +221,14 @@ func (r *Rcli) request(cmdType constants.Command, cont []byte, offset int, lengt
 }
 
 func (r *Rcli) Assign(symbol string, value interface{}) error {
-	fmt.Println("in assign")
+	// fmt.Println("in assign")
 	assignCommand, err := assign.Assign(symbol, value)
 	if err != nil {
-		fmt.Println("Error when assign")
+		// fmt.Println("Error when assign")
 		return err
 	}
 	rp := r.request(constants.CmdSetSexp, assignCommand, 0, len(assignCommand))
-	fmt.Println("rp is", rp)
+	// fmt.Println("rp is", rp)
 	if rp != nil && !rp.IsError() {
 		return nil
 	}

@@ -7,7 +7,7 @@ import (
 
 	"strconv"
 
-	"github.com/senseyeio/roger/constants"
+	"github.com/lujiacn/rservcli/constants"
 )
 
 // Parse converts a byte array containing R SEXP to a golang object.
@@ -117,6 +117,10 @@ func parseReturningOffset(buf []byte, offset int) (interface{}, int, error) {
 	}
 	if xt == constants.XtUnknown {
 		return parseUnknown(buf, offset, end)
+	}
+	if xt == constants.XtLarge {
+		//parseLargeString or other
+		return nil, offset, errors.New("XtLarg not implemented yet")
 	}
 
 	return nil, offset, errors.New("Unsupported expression type: " + strconv.Itoa(int(xt)))
