@@ -23,5 +23,4 @@ const (
 	XtRaw          ExpressionType = 37 /* P data: int(n),byte,byte,... */
 	XtComplexArray ExpressionType = 38 /* P data: [n*16]double,double,... (Re,Im,Re,Im,...) */
 	XtUnknown      ExpressionType = 48 /* P data: [4]int - SEXP type (as from TYPEOF(x)) */
-	XtLarge        ExpressionType = 64 /* new in 0102: if this flag is set then the length of the objectd is coded as 56-bit integer enlarging the header by 4 bytes */
 )

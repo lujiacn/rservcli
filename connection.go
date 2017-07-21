@@ -33,15 +33,6 @@ const (
 	dtSexp   dataType = 10
 )
 
-//command Type
-type command int
-
-const (
-	cmdLogin    command = 1
-	cmdVoidEval command = 2
-	cmdEval     command = 3
-)
-
 type Rcli struct {
 	// hostName            string
 	// portNumber          int64

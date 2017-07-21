@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/lujiacn/rservcli/constants"
 	"github.com/lujiacn/rservcli/sexp"
-	"github.com/senseyeio/roger/constants"
 )
 
 // Packet is the interface satisfied by objects returned from a R command.
@@ -81,13 +81,13 @@ func (p *packet) GetResultObject() (interface{}, error) {
 		return nil, errors.New("Command failed for an unknown reason")
 	}
 	isSexp := p.content[0] == byte(constants.DtSexp)
-	isLarge := p.content[0] == byte(constants.DtLarge)
+	isLarge := p.content[0] == byte(constants.DtSexp|constants.DtLarge)
 	if !isSexp && !isLarge {
 		return nil, errors.New("Expected DT_SEXP or DT_LARGE response")
 	}
-	offset := 4
+	offset := constants.SmHeaderSize
 	if isLarge {
-		offset = 8
+		offset = constants.LgHeaderSize
 	}
 	return sexp.Parse(p.content[offset:len(p.content)], 0)
 }
