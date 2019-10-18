@@ -248,8 +248,10 @@ func (r *Rcli) VoidExec(command string) error {
 	errObj, _ := r.Eval(`exists("err_msg")`)
 	var errMsgExist bool = false
 	switch errObj.(type) {
-	default:
+	case bool:
 		errMsgExist = errObj.(bool)
+	default:
+		errMsgExist = false
 	}
 
 	//get error message
