@@ -72,6 +72,13 @@ func NewRcli(hostname string, portnumber int64) (*Rcli, error) {
 
 func (r *Rcli) Close() error {
 	err := r.ReadWriteCloser.Close()
+	if err != nil {
+		fmt.Printf("Close error %v", err)
+	}
+	err = r.ShutDown()
+	if err != nil {
+		fmt.Printf("Close error %v", err)
+	}
 	return err
 }
 
@@ -160,6 +167,15 @@ func (r *Rcli) Eval(command string) (interface{}, error) {
 	r.sendCommand(constants.CmdEval, command+"\n")
 	p := r.readResponse()
 	return p.GetResultObject()
+}
+
+func (r *Rcli) ShutDown() error {
+	if r.conn == nil {
+		return errors.New("Connection was previously closed")
+	}
+	r.sendCommand(constants.CmdShutdown, "")
+	p := r.readResponse()
+	return p.GetError()
 }
 
 func (r *Rcli) VoidEval(command string) error {
